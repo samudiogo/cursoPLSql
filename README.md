@@ -2,7 +2,7 @@
 
 ##Ementa:
 
-###Introdução ao Oracle
+### Introdução ao Oracle
 
 SQL*Plus
 Iniciando no SQL*Plus
@@ -25,7 +25,7 @@ Entendo a ajuda do SQL*Plus
 Obtendo ajuda do SQL*Plus
  
 
-###Criação de objetos de banco de dados (Tabelas, índices, visões, seqüências)
+### Criação de objetos de banco de dados (Tabelas, índices, visões, seqüências)
 
 Criando tabelas
 Obtendo informações das tabelas
@@ -49,7 +49,7 @@ Excluindo uma visão
 Visão Materializada
  
 
-###Introdução a PL/SQL
+### Introdução a PL/SQL
 
 Cursores
 Cursores Explícitos
@@ -71,7 +71,7 @@ Trabalhando Com Associação da Dados Dataming utilizando Principio de Tabelas H
 Connnect  BY  Prior
  
 
-###Usando Funções do Oracle
+### Usando Funções do Oracle
 
 Usando funções simples
 Usando funções de uma linha
@@ -81,7 +81,7 @@ Funções de conversão
 Funções de expressão regular
  
 
-###Usando funções de agregação
+### Usando funções de agregação
 Agrupando linhas
 Usando GROUP BY
 Usando HAVING para filtrar grupos de linhas
@@ -89,7 +89,7 @@ Usando WHERE e GROUP BY juntas
 USANDO WHERE, GROUP BY e HAVING 
  
 
-###Trabalhando com datas no Oracle
+### Trabalhando com datas no Oracle
 Armazenando e recuperando datas
 Convertendo data/horário com TO_CHAR () e TO_DATE ()
 Usando TO_CHAR () para converter em string
@@ -106,7 +106,7 @@ TRUNC
 ROUND
  
 
-###Trabalhando com fuso-horário
+### Trabalhando com fuso-horário
 Fuso horário do banco e fuso horário da sessão
 Diferença de fuso horário
 Usando timestamp
@@ -117,7 +117,7 @@ INTERVAL YEAR TO MONTH
 Funções de intervalo de tempo
  
 
-###Efetuando consultas em uma tabela no Oracle
+### Efetuando consultas em uma tabela no Oracle
 
 Executando consultas (SELECT)
 Executando consultas com campos específicos
@@ -172,7 +172,7 @@ Usando as cláusulas CONNECT BY e START WITH
 Usando peusdocoluna LEVEL
  
 
-###OLAP
+### OLAP
 GROUP BY
 ROLLUP
 CUBE
@@ -180,7 +180,7 @@ GROUPING
 GROUPING SETS
 GROUPING_ID ()
 
-###Usando funções analíticas
+### Usando funções analíticas
 
 Funções de janela
 Funções de relatório
@@ -195,7 +195,7 @@ Obtendo o valor atual de uma dimensão com CURRENTV ()
 Acessando células com loop FOR
  
 
-###Usuários, privilégios e atribuições
+### Usuários, privilégios e atribuições
 
 Criando usuário
 Alterando senha, excluindo usuário
@@ -214,13 +214,13 @@ Criando atribuições
 Concedendo
 Revogando
 
-###Auditoria
+### Auditoria
 
 Privilégios necessários para auditorias
 Visões de trilha de auditoria
  
 
-###Controle de transações
+### Controle de transações
 
 Confirmando e revertendo uma transação
 Iniciando uma transação
@@ -243,7 +243,7 @@ Usando uma sub-consulta em uma cláusula START WITH
 Incluindo condições em uma consulta hierárquica
  
 
-###Tablespaces, Datafiles e Control Files
+### Tablespaces, Datafiles e Control Files
 
 Tablespace
 Criando diversos tablespace
@@ -251,7 +251,7 @@ System
 Users
 Data Warehouse
 
-###Conceitos de data warehouse
+### Conceitos de data warehouse
 Tipos de modelos de dimensões
 Modelo STAR
 Conceito de Dimensões
@@ -264,16 +264,16 @@ Buscando os Dados para dentro do Oracle com ETL Excel sendo a fonte de referênc
 Gerando Árvore de Decisão com OLAP
  
 
-###DataMining com Plsql e olap
+### DataMining com Plsql e olap
 
-####Introdução ao DataMining Utilizando PLS/SQL COM  Olap com Rotinas
+#### Introdução ao DataMining Utilizando PLS/SQL COM  Olap com Rotinas
 
 K-Means,
 Apriori
 (Algoritmos Realizados em Aula)
  
 
-###Gerando Relatórios de saída (XML, TXT, CSV)
+### Gerando Relatórios de saída (XML, TXT, CSV)
 
 XML
 Gerando TXT
