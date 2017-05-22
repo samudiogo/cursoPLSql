@@ -25,14 +25,17 @@ create or replace directory ARQUIVOS as '/tmp/';
 DROP TABLE ALUNO_DISCIPLINA CASCADE CONSTRAINT;
 DROP TABLE ALUNO CASCADE CONSTRAINT;
 DROP TABLE DISCIPLINA CASCADE CONSTRAINT;
- create table aluno(idAluno number (15) primary key,
+ create table ALUNO(idAluno number (15) primary key,
                     nome varchar2 (50) not null,
                     email varchar2 (60) not null unique);
- create table disciplina (idDisciplina number(15) primary key,
+ create table DISCIPLINA (idDisciplina number(15) primary key,
                           disciplina varchar2 (50)
                           );
+alter table disciplina add constraint FNK_DISCIPLINA_UNIQUE
+    unique(disciplina);
 
-  create table aluno_disciplina(id_aluno number (15),
+create table ALUNO_DISCIPLINA(
+								id_aluno number (15),
                                 id_disciplina number (15),
                      primary key(id_aluno, id_disciplina),
 						  nota1 number (15,2),
@@ -78,12 +81,38 @@ CREATE OR REPLACE VIEW V$ALUNODISCIPLINA AS
 
 ----------------------------------------------------
 
+-- triggers
+
+create or replace trigger gat_alunos
+	before 
+	insert on aluno 
+		for each row begin 
+		select seq_aluno.nextval 
+	into :new.idAluno 
+	from dual; 
+end;
+/
+
+create or replace trigger gat_DISCIPLINA
+	before 
+	insert on DISCIPLINA 
+		for each row begin 
+		select seq_disciplina.nextval 
+	into :new.idDisciplina 
+	from dual; 
+end;
+/
+-----------------------------------------------------
+
 -- PL-SQL
 -- definindo o cabeçalho (TIPO INTERFACE)
 
 create or replace package PKG_Aluno is
-	procedure inclusao(vnome in varchar2, vemail in varchar2, vdisciplina in varchar2, 
-						vnota1 in number, vnota2 in number, vdata in date);
+
+	procedure gravaAluno(vnome in varchar2, vemail in varchar2);
+	procedure gravaDisciplina(vdisciplina in varchar2);
+
+	procedure alocar(vidAluno in number, vidDisciplina in number, vnota1 in number, vnota2 in number, vdata in date);
 	
 	function findByCodeAluno(vcod in number) return varchar2;
 
@@ -96,32 +125,49 @@ create or replace package PKG_Aluno is
 	function findAll return sys_refcursor;
 
 end PKG_Aluno;
-
-create or replace package PKG_Aluno body is
-
-	create or replace procedure inclusao(vnome in varchar2, vemail in varchar2, vdisciplina in varchar2, 
-							vnota1 in number, vnota2 in number, vdata in date)
-	BEGIN
-
-		INSERT INTO aluno VALUES (seq_aluno.nextval, vnome, vemail);
-
-		INSERT INTO disciplina VALUES(seq_disciplina.nextval, vdisciplina);
-
-		INSERT INTO aluno_disciplina VALUES (seq_aluno_disciplina.nextval,
-											seq_aluno.currval,
-											seq_disciplina.currval, vnota1,vnota2, vdata);
-		COMMIT;
-		dbms_output.putline('dados gravados');
+/
+--- CRIANDO O CORPO DO PACKAGE
+create or replace package body PKG_Aluno is
 	
-		EXCEPTION WHEN OTHERS THEN;
-			dbms_output.putline('ERRO AO GRAVAR: ' || SQLERRM);
+	procedure gravaAluno(vnome in varchar2, vemail in varchar2)as
+	begin
+		INSERT INTO aluno VALUES (null, vnome, vemail);
+		COMMIT;
+		dbms_output.put_line('dados gravados');
+	
+		EXCEPTION WHEN OTHERS THEN
+			dbms_output.put_line('ERRO AO GRAVAR: ' || SQLERRM);
+	end;
+
+	procedure gravaDisciplina(vdisciplina in varchar2)as
+	begin
+		INSERT INTO disciplina VALUES(null, vdisciplina);
+		COMMIT;
+		dbms_output.put_line('dados gravados');
+	
+		EXCEPTION WHEN OTHERS THEN
+			dbms_output.put_line('ERRO AO GRAVAR: ' || SQLERRM);
+	end;
+
+
+	procedure alocar(vidAluno in number, vidDisciplina in number, vnota1 in number, vnota2 in number, vdata in date) AS
+	vnome varchar2(50);
+	vdisciplina varchar2(50);
+	BEGIN
+		select nome into vnome from aluno where idaluno = vidaluno;
+		select disciplina into vdisciplina from disciplina where iddisciplina = viddisciplina;
+		INSERT INTO aluno_disciplina VALUES (vidAluno,vidDisciplina, vnota1,vnota2,vdata);
+		COMMIT;
+		dbms_output.put_line('dados gravados');
+	
+		EXCEPTION WHEN OTHERS THEN
+			dbms_output.put_line('ERRO AO GRAVAR: ' || SQLERRM);
 
 	end;
 
  -- final de procedure
 
-	CREATE OR REPLACE FUNCTION findByCodeAluno(vcod in number)
-	RETURN varchar2
+	FUNCTION findByCodeAluno(vcod in number) RETURN varchar2
 	AS
 	vnome varchar2(50)    := '';
 	vemail varchar2(50)    := ''; 
@@ -129,15 +175,15 @@ create or replace package PKG_Aluno body is
 		SELECT nome, email into vnome,vemail FROM aluno 
 		WHERE idAluno = vcod;
 
-		RETURN to_char(vcod) || ',' vnome || ',' || vemail;
+		RETURN to_char(vcod) || ',' || vnome || ',' || vemail;
 
-		EXCEPTION WHEN OTHERS THEN;
-			dbms_output.putline('ERRO AO buscar: ' || SQLERRM);
+		EXCEPTION WHEN OTHERS THEN
+			dbms_output.put_line('ERRO AO buscar: ' || SQLERRM);
 		RETURN -1;
 	END;
 
  -- final de procedure
-	CREATE OR REPLACE FUNCTION findByCodeDisciplina(vcod in number)
+	FUNCTION findByCodeDisciplina(vcod in number)
 	RETURN varchar2
 	AS 
 	vdisciplina  varchar2(50)    := '';
@@ -147,10 +193,10 @@ create or replace package PKG_Aluno body is
 
 		WHERE  idDisciplina = vcod;
 
-		RETURN to_char(vcod) || ',' vdisciplina;
+		RETURN to_char(vcod) || ',' || vdisciplina;
 
-		EXCEPTION WHEN OTHERS THEN;
-			dbms_output.putline('ERRO AO buscar: ' || SQLERRM);
+		EXCEPTION WHEN OTHERS THEN
+			dbms_output.put_line('ERRO AO buscar: ' || SQLERRM);
 
 		RETURN -1;
 
@@ -159,8 +205,8 @@ create or replace package PKG_Aluno body is
 
 	 -- final de procedure
 
-	CREATE OR REPLACE FUNCTION findAllAluno
-	RETURN AS SYS_REFCURSOR
+	FUNCTION findAllAluno
+	RETURN SYS_REFCURSOR
 	AS
 		VLINHA SYS_REFCURSOR;
 		BEGIN
@@ -170,18 +216,18 @@ create or replace package PKG_Aluno body is
 
 	 -- final de procedure
 
-	CREATE OR REPLACE FUNCTION findAllDisciplina
-	RETURN AS SYS_REFCURSOR
+	FUNCTION findAllDisciplina
+	RETURN SYS_REFCURSOR
 	AS
 		VLINHA SYS_REFCURSOR;
 		BEGIN
-			OPEN VLINHA FOR SELECT * FROM DISCIPLINA;
+			OPEN VLINHA FOR SELECT disciplina FROM DISCIPLINA;
 			RETURN VLINHA;
 		END;
 	 -- final de procedure
 
-	CREATE OR REPLACE FUNCTION findAll
-	RETURN AS SYS_REFCURSOR
+	FUNCTION findAll
+	RETURN SYS_REFCURSOR
 	AS
 		VLINHA SYS_REFCURSOR;
 		BEGIN
@@ -190,8 +236,24 @@ create or replace package PKG_Aluno body is
 		END;
 
 	 -- final de procedure
-END;
+END PKG_Aluno;
+/
 
+-- testando
+
+exec PKG_ALuno.gravaAluno('jose','jose@gmail.com');
+exec PKG_ALuno.gravaDisciplina('oracle dba');
+exec PKG_ALuno.gravaDisciplina('oracle sql');
+
+
+select PKG_ALuno.findALl from dual;
+select  PKG_ALuno.findAllALuno from dual;
+select  PKG_ALuno.findAllDisciplina from dual;
+
+
+exec  PKG_ALuno.alocar(3,1, 6,4,to_date('05/04/2017','dd/mm/yyyy'));
+
+-------------------  pronto! ---------------------
 
 
 
