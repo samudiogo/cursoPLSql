@@ -257,6 +257,33 @@ exec  PKG_ALuno.alocar(3,1, 6,4,to_date('05/04/2017','dd/mm/yyyy'));
 
 
 
+----------------------------------------------
+
+set serveroutput on size 15000;
+declare 
+   type vvetor is table of  aluno%rowtype  index by binary_integer;
+   vetor vvetor;
+    varquivo utl_file.file_type;
+ begin
+   select * bulk collect into vetor from aluno;
+    varquivo := utl_file.fopen('/tmp','vetoraluno.csv','w');
+   for indx in vetor.first..vetor.last loop
+      dbms_output.put_line('Indice :' || indx);
+     dbms_output.put_line('idAluno :' || vetor(indx).idAluno);
+     dbms_output.put_line('Nome :' || vetor(indx).nome);
+     dbms_output.put_line('Email :' || vetor(indx).email);
+     utl_file.put_line(varquivo, vetor(indx).idAluno ||';'|| vetor(indx).nome ||';'|| vetor(indx).email);
+  end loop;
+  utl_file.fclose(varquivo);
+  dbms_output.put_line('Dados Gravados');
+ exception when others then
+  dbms_output.put_line('Error :' || sqlerrm);
+end;
+/
+
+
+
+-------------------------------------------------------   
 
 
 
