@@ -5,23 +5,41 @@
 ### Introdução ao Oracle
 
 SQL*Plus
+
 Iniciando no SQL*Plus
+
 Tipos de dados
+
 Usando SQL*Plus
+
 Exibindo a estrutura de uma tabela
+
 Editando instruções SQL
+
 Salvando, e recuperando arquivos
+
 Formatando colunas
+
 Definindo tamanho da pagina
+
 Limpando formatação das colunas
+
 Definindo o tamanho da linha
+
 Usando variáveis
+
 Variáveis temporárias
+
 Variáveis definidas
+
 Criando relatórios simples
+
 Usando variáveis temporárias em scripts
+
 Usando variáveis definidas em scripts
+
 Entendo a ajuda do SQL*Plus
+
 Obtendo ajuda do SQL*Plus
  
 
