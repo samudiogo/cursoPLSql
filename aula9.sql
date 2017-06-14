@@ -170,3 +170,11 @@ end;
 /
 
 print numero;
+select job from user_jobs;
+--23
+
+begin
+ dbms_job.run(:numero);
+end;
+/
+------------------------------------------
