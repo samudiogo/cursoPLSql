@@ -15,3 +15,7 @@ grant execute on utl_file to sessao009;
 
 shutdown immediate;
 startup;
+
+alter session set nls_date_format='dd/mm/yyyy';
+set serveroutput on size 10000;
+set long 10000;
