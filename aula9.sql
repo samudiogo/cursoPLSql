@@ -178,3 +178,23 @@ begin
 end;
 /
 ------------------------------------------
+-----------------------------------------
+
+
+ select job, to_char(last_date, 'dd/mm/yyyy hh24:mi:ss') last,
+  to_char(next_date, 'dd/mm/yyyy hh24:mi:ss') next from user_jobs;
+
+
+
+ JOB LAST                NEXT
+---- ------------------- -------------------
+  23 14/06/2017 20:50:01 14/06/2017 20:51:01
+
+  --apagar o job
+  
+begin
+ dbms_job.remove(23);
+end;
+/
+
+-------------------------------------------------
