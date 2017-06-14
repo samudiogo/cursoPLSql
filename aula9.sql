@@ -87,7 +87,27 @@ exception when others then
   rollback;
   dbms_output.put_line('Error :' || sqlerrm);
   
-
 end;
+
+----------------- momento de teste
+
+DECLARE
+  VIDPRODUTO NUMBER;
+  VQUANTIDADEPED NUMBER;
+  TOTAL NUMBER;
+  QUANTIDADESALDO NUMBER;
+BEGIN
+  VIDPRODUTO := 2;
+  VQUANTIDADEPED := 2;
+
+  PROCVENDA(
+    VIDPRODUTO => VIDPRODUTO,
+    VQUANTIDADEPED => VQUANTIDADEPED,
+    TOTAL => TOTAL,
+    QUANTIDADESALDO => QUANTIDADESALDO
+  );
+  DBMS_OUTPUT.PUT_LINE('TOTAL = ' || TOTAL);
+  DBMS_OUTPUT.PUT_LINE('QUANTIDADESALDO = ' || QUANTIDADESALDO);
+END;
 
 
