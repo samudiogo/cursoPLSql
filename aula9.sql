@@ -111,3 +111,42 @@ BEGIN
 END;
 
 
+---------------------------------------------------------------------
+
+
+create or replace procedure alertaEstoque
+ as 
+  vquantidade number (15,2) :=0;
+  vnomeProdu varchar2 (50) :='';
+  dataestoque date;
+  cursor linha is select idproduto, nome, dataestoque, quantidade 
+    from produtos p inner join estoque e
+	on  p.idProduto = e.id_produto;
+	
+   vregprod     produtos%rowtype;
+   vregestoque  estoque%rowtype;
+  begin
+   
+   open linha;
+     loop
+	  fetch linha into   vregprod.idProduto, vregprod.nome, 
+  		                 vregestoque.dataestoque, vregestoque.quantidade;
+
+     exit when linha%notfound;
+	  
+	if (vregestoque.quantidade <=5) then 
+	  dbms_output.put_line('----------------------------------------');
+	  dbms_output.put_line('Alerta Produto em Baixa, Reponha Estoque');
+	  dbms_output.put_line('codigo :' || vregprod.idProduto);
+	  dbms_output.put_line('NOme   :' || vregprod.nome);
+	  dbms_output.put_line('Data Estoque :' || vregestoque.dataestoque);
+	  dbms_output.put_line('Quantidade   :' || vregestoque.quantidade);
+
+    end if;
+	
+   end loop;
+   close linha;
+    
+  exception when others then 
+     dbms_output.put_line('Error :' || sqlerrm);
+end;
