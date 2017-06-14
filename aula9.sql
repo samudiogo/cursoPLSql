@@ -46,3 +46,48 @@ create table venda (idVenda number (15) primary key,
 
 create sequence seq_venda;
 
+------------------------------------------------------------------------
+
+create or replace procedure procvenda(vidproduto in number,
+vquantidadeped in number, total out number, quantidadesaldo out number)
+as 
+vnomeprod varchar (50) :='';
+vpreco number (15,2) :=0;
+vquantidadeest number (5) :=0;
+ begin
+
+ select nome,preco into vnomeprod, vpreco   from produtos      
+     where idproduto = vidproduto;
+	 
+ select quantidade into vquantidadeest from estoque 
+   where id_Produto = vidproduto; 
+
+   if (vquantidadeest >= vquantidadeped ) then
+     
+     total := vquantidadeped * vpreco;
+    quantidadesaldo := vquantidadeest - vquantidadeped ;
+   
+   insert into venda values 
+	   (seq_venda.nextval, systimestamp,vquantidadeped,vidproduto,total);
+	   
+     update estoque set  quantidade= quantidadesaldo,
+         dataestoque=sysdate     where id_produto=vidProduto;  
+
+    dbms_output.put_line('Venda Realizada :' || total || ',' ||
+                 vnomeprod || ',' || vquantidadeped);
+    commit;
+	
+  else
+     dbms_output.put_line('Venda Nao Realizada  quantidade Insu8ficiente');
+ 
+   end if;
+   
+
+exception when others then
+  rollback;
+  dbms_output.put_line('Error :' || sqlerrm);
+  
+
+end;
+
+
