@@ -157,3 +157,16 @@ create or replace procedure alertaEstoque
   exception when others then 
      dbms_output.put_line('Error :' || sqlerrm);
 end;
+---------------------------------------------------
+
+
+ var numero number;
+
+--Agendando  o JOB
+ begin
+  dbms_job.submit(:numero, 'alertaEstoque;', sysdate,
+      'sysdate + (1/1440)');  
+ end;
+/
+
+print numero;
