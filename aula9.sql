@@ -46,6 +46,8 @@ create table venda (idVenda number (15) primary key,
 
 create sequence seq_venda;
 
+create table alerta ( registro varchar2 (3000));
+
 ------------------------------------------------------------------------
 
 create or replace procedure procvenda(vidproduto in number,
