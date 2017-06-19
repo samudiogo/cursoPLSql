@@ -46,3 +46,41 @@ create table setor(id number (15) primary key,
  insert into setor values (105,'lu','inf',
    to_date('10/08/2016', 'dd/MM/yyyy'),20000);
  commit;  
+--------------------------------
+create  or replace trigger gat_setor 
+before insert or delete or update on setor
+for each row
+begin
+ 
+  if (to_char(sysdate,'DY') in ('SAB','DOM'))
+Or (to_CHAR (sysdate,'HH24:MI') not between '09:00' and '19:00') THEN
+
+ IF    DELETING THEN
+ RAISE_APPLICATION_ERROR(-20001,'Nao pode Excluir fora do expediente');
+ elsif  UPDATING THEN
+ RAISE_APPLICATION_ERROR(-20002,'Nao pode Alterar fora do expediente');
+ else
+ RAISE_APPLICATION_ERROR(-20003,'Nao pode Inserir fora do expediente');
+ end if;
+end if;
+end;
+/
+
+--delete ou preserve
+ drop table cliente;
+ create global temporary table cliente(id number(15),
+ nome varchar (50))
+ on commit delete rows; -- hehehehe
+
+insert into cliente values (100,'luis');
+insert into cliente values (120,'luciana');
+insert into cliente values (140,'maria');
+insert into cliente values (160,'elo');
+
+
+select * from cliente;
+
+commit;
+exit; --kkkkkkkkkkkkkkkkkkkk
+--eha a morte dos dados 
+
