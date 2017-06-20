@@ -227,3 +227,45 @@ create or replace procedure criaView (vsexo in varchar2)
 
 
 -----------------------------------------------
+-----------------------------------------------
+ 
+ 
+ 
+--execute imediate
+
+conn system/coti
+create tabe t1(n1 number(5));
+insert into t1 values (1);
+insert into t1 values (1);
+insert into t1 values (2);
+insert into t1 values (3);
+insert into t1 values (4);
+insert into t1 values (5);
+
+
+create materialized view M$_T1
+ build immediate
+ refresh complete on demand
+as
+  select * from t1;
+
+--view materializada vendo 6 campos
+
+
+select * from M$_T1;
+insert into t1 values (6);
+insert into t1 values (7);
+insert into t1 values (8);
+insert into t1 values (9);
+insert into t1 values (10);
+
+-------minha tabela tem 11
+
+-----------------------
+
+begin
+  dbms_mview.refresh('M$_T1');
+end;
+/
+
+ select * from M$_T1;
