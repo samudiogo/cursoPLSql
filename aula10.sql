@@ -84,3 +84,146 @@ commit;
 exit; --kkkkkkkkkkkkkkkkkkkk
 --eha a morte dos dados 
 
+---------------------------------------------------
+ ---------------------------------------------
+ 
+ conn sys/coti as sysdba
+ alter system set utl_file_dir='*' scope=spfile;
+ shutdown immediate;
+ startup;
+ grant execute on utl_file to sessao010;
+ conn sys/coti as sysdba
+ show parameters utl;
+
+ conn sessao010/coti
+create table produto(id number (15) primary key,
+  nome varchar (15), preco number (15,2));
+  insert into produto values (100,'xanxung',200);
+  insert into produto values (200,'galaxia',230);
+  insert into produto values (300,'rasus',130);
+  insert into produto values (400,'iphone pera',310);
+commit;
+ 
+create or replace procedure geraHTML as
+  arquivo utl_file.file_type;
+  cursor linhas is select * from produto;
+  reg produto%rowtype;
+ begin
+  htp.print('<h3>Listagem dos Produtos</h3>');
+  htp.print('<hr/>');
+  open linhas;
+   loop
+    fetch linhas into reg;
+	exit when linhas%notfound;
+	htp.print('<ul>');
+	htp.print('<li>' || reg.id || ',' || reg.nome 
+	           || ',' || reg.preco || '</li>');
+	htp.print('</ul>');
+  end loop;
+  close linhas;	
+   dbms_output.put_line('Dados gerados com sucesso');
+   exception when others then
+   dbms_output.put_line('Error :' || sqlerrm);
+ end;
+/ 
+ 
+ -----------------------------
+ set serveroutput on size 15000;
+ create or replace procedure gravaHTML
+  as  
+  l_thepage  htp.htbuf_arr;
+  l_output utl_file.file_type;
+  l_lines  number default 999999999;
+  begin
+   l_output := utl_file.fopen('c:temp','produto.html','w');
+   owa.get_page(l_thepage, l_lines);
+    for i in 1..l_lines loop 
+        utl_file.put(l_output, l_thepage(i));
+    end loop;
+   utl_file.fclose(l_output);
+   dbms_output.put_line('Arquivo Armazenado ');
+   exception when others then
+   dbms_output.put_line('Error :' || sqlerrm);
+ end;
+/ 
+ 
+ declare
+   nm owa.vc_arr;
+   vl owa.vc_arr;
+ begin
+
+    owa.init_cgi_env(nm.count, nm, vl);
+          geraHTML;
+          gravaHTML;   		  
+     dbms_output.put_line('site gerado');
+ exception when others then	 
+    dbms_output.put_line('Error :' || sqlerrm);
+end;
+/	
+ 
+ 
+----------------------------------------------
+
+create table estat (
+id number (15),
+nome varchar (50),
+email varchar (50));
+declare
+begin
+for i in 1..5000 loop
+insert into estat values (i, 'nome' || i, 'email' || i);
+end loop;
+commit;
+end;
+/
+
+set timing on;
+select * from estat;
+
+53.72 segundos
+
+create unique ndx_nome_email on estat (nome, email);
+tablespace users;
+alter table estat add constraint cnk_chave primary key (id);
+
+set timing on;
+select * from estat;
+
+52.38 segundos
+
+set pagesize 50000;
+set linesize 1000;
+
+set timing on;
+select * from estat;
+
+12.77 segundos
+
+set autotrace traceonly;
+select * from estat;
+
+set autotrace off;
+
+--------------------------------------------
+
+create table cliente(
+idCliente number(15) primary key,
+nome varchar (50),
+email varchar (50) unique,
+sexo varchar (1));
+
+insert into cliente values (10, 'lu', 'lu@gmail.com', 'f');
+insert into cliente values (11, 'helio', 'helio@gmail.com', 'm');
+insert into cliente values (12, 'thiago', 'thiago@gmail.com', 'm');
+insert into cliente values (13, 'thalita', 'thalita@gmail.com', 'f');
+insert into cliente values (14, 'fernando1', 'fernando1@gmail.com', 'm');
+
+commit;
+
+select * from cliente;
+
+create or replace procedure criaView (vsexo in varchar2)
+
+
+
+-----------------------------------------------
